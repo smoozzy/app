@@ -1,0 +1,26 @@
+# os x
+.DS_Store
+.DS_Store?
+.*DS_Store*
+
+# windows
+Thumbs.db
+
+# idea, vscode and visual studio
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# application: local env files
+.env.local
+.env.*.local
