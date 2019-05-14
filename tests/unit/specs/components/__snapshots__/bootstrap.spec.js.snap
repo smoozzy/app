@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component \`bootstrap\` should have correct markup 1`] = `
+<div
+  class="s-bootstrap"
+>
+  <router-view-stub
+    name="default"
+  />
+</div>
+`;

@@ -3,6 +3,10 @@
   "description": "Bootstrap for Vue app",
   "version": "0.1.0",
   "author": "Smoozzy Code <smoozzy.code@gmail.com>",
+  "license": {
+    "type": "MIT",
+    "url": "https://www.opensource.org/licenses/mit-license.php"
+  },
   "bugs": {
     "url": "https://github.com/smoozzy/app/issues"
   },
@@ -10,11 +14,52 @@
     "type": "git",
     "url": "git+https://github.com/smoozzy/app.git"
   },
+  "scripts": {
+    "lint": "vue-cli-service lint --no-fix",
+    "lint:fix": "vue-cli-service lint",
+    "test": "yarn test:unit",
+    "test:unit": "vue-cli-service test:unit"
+  },
+  "devDependencies": {
+    "@types/jest": "23.3.14",
+    "@vue/cli-plugin-babel": "3.7.0",
+    "@vue/cli-plugin-eslint": "3.7.0",
+    "@vue/cli-plugin-unit-jest": "3.7.0",
+    "@vue/cli-service": "3.7.0",
+    "@vue/test-utils": "1.0.0-beta.29",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-eslint": "10.0.1",
+    "babel-jest": "24.8.0",
+    "eslint": "5.16.0",
+    "eslint-plugin-vue": "5.2.2",
+    "lint-staged": "8.1.6",
+    "vue": "2.6.10",
+    "vue-router": "3.0.6",
+    "vue-template-compiler": "2.6.10",
+    "vuex": "3.1.1",
+    "vuex-router-sync": "5.0.0",
+    "yorkie": "2.0.0"
+  },
+  "peerDependencies": {
+    "vue": "~2.6.0",
+    "vue-router": "~3.0.0",
+    "vuex": "~3.1.0",
+    "vuex-router-sync": "~5.0.0"
+  },
   "engines": {
     "node": ">= 10.13.0",
-    "npm": ">= 6.4.1"
+    "yarn": ">= 1.6.0"
   },
   "type": "module",
   "main": "src/index.js",
-  "sideEffects": false
+  "sideEffects": false,
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
 }
