@@ -71,6 +71,18 @@ describe('Application bootstrap: router', () => {
 
         expect(vm.$el.outerHTML).toMatchSnapshot();
     });
+
+    it('router should be replaced by user instance', () => {
+        const router = new Router({
+            mode: 'history',
+        });
+
+        const app = bootstrap({
+            router,
+        });
+
+        expect(app.$router === router).toBeTruthy();
+    });
 });
 
 describe('Application bootstrap: store', () => {
@@ -118,5 +130,15 @@ describe('Application bootstrap: store', () => {
         });
 
         expect(app.$store.getters.theSameProperty).toBe('test');
+    });
+
+    it('store should be replaced by user instance', () => {
+        const store = new Vuex.Store();
+
+        const app = bootstrap({
+            store,
+        });
+
+        expect(app.$store === store).toBeTruthy();
     });
 });

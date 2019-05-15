@@ -64,11 +64,16 @@ export default [{
 
 import bootstrap from '@smoozzy/app';
 import routes from './router';
+import store from './store';  
 
 bootstrap({
+    // configuration for Vue router
     router: {
         routes,
-    }
+    },
+
+    // own instance of `Vuex.Store`
+    store,
 }).$mount('#app');
 ```
 

@@ -13,8 +13,8 @@ Vue.use(Vuex);
 /**
  * @typedef {Object} AppOptions
  * @extends {ComponentOptions}
- * @property {RouterOptions} [router]
- * @property {StoreOptions} [store]
+ * @property {RouterOptions|VueRouter} [router]
+ * @property {StoreOptions|Store} [store]
  */
 
 /**
@@ -31,14 +31,18 @@ export default function bootstrap(options = {}) {
     } = options;
 
     // prepare router and store
-    const router = new Router(Object.assign({
-        mode: 'history',
-        base: process.env.BASE_URL,
-    }, routerOptions));
+    const router = routerOptions instanceof Router
+        ? routerOptions
+        : new Router(Object.assign({
+            mode: 'history',
+            base: process.env.BASE_URL,
+        }, routerOptions));
 
-    const store = new Vuex.Store(Object.assign({
-        strict: process.env.NODE_ENV !== 'production'
-    }, storeOptions));
+    const store = storeOptions instanceof Vuex.Store
+        ? storeOptions
+        : new Vuex.Store(Object.assign({
+            strict: process.env.NODE_ENV !== 'production'
+        }, storeOptions));
 
     sync(store, router);
 

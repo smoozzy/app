@@ -1,0 +1,5 @@
+coverage/*
+tests/*
+.*
+*.config.js
+*.log
