@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 import {sync} from 'vuex-router-sync';
 
 import SBootstrap from './components/bootstrap';
+import methods from './methods';
+
 
 Vue.config.productionTip = false;
 Vue.use(Router);
@@ -27,6 +29,7 @@ export default function bootstrap(options = {}) {
     const {
         router: routerOptions,
         store: storeOptions,
+        methods: methodsOptions,
         ...app  // additional app options
     } = options;
 
@@ -50,6 +53,7 @@ export default function bootstrap(options = {}) {
     return new Vue(Object.assign(app, {
         router,
         store,
+        methods: Object.assign(methods, methodsOptions),
         render: h => h(SBootstrap),
     }));
 }

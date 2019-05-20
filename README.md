@@ -15,6 +15,7 @@ The bootstrap creates a Vue application with the following plugins and extension
 - [ ] modals
   - [ ] manager
   - [ ] component
+- [x] vue globals wrapper
 - [ ] modules system
 - [x] router
 - [x] store
@@ -77,6 +78,20 @@ bootstrap({
 }).$mount('#app');
 ```
 
+### Vue Global API
+
+You can use Vue Global API via application methods:
+
+```js
+import bootstrap from '@smoozzy/app';
+
+bootstrap()
+    .component('component-name', component)
+    .directive('directive-name', directive)
+    .filter('filter-name', filter)
+    .mixin(mixin)
+    .use(plugin);
+```
 
 ## Plugins
 
@@ -100,6 +115,7 @@ import Vuex from 'vuex';
 import {sync} from 'vuex-router-sync';
 
 import SBootstrap from '@smoozzy/app/src/components/bootstrap';
+import methods from '@smoozzy/app/src/methods';
 
 Vue.config.productionTip = false;
 Vue.use(Router);
@@ -124,6 +140,10 @@ sync(store, router);
 new Vue({
     router,
     store,
+    methods: {
+        ...methods,
+        // ... your app methods
+    }
     render: h => h(SBootstrap),
 });
 ```
@@ -182,15 +202,28 @@ yarn upgrade
 
 We use [Jest](https://jestjs.io) and [@vue/cli-plugin-unit-jest](https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest) for running unit tests.
 
-### Coverage report
-
-To get coverage report run command:
-
 ```bash
+# wath mode for a tests running
+yarn test:unit --watch
+
+# if you want to get coverage report (will be placed in directory `coverage`)
 yarn test:unit --coverage
+
+# or
+yarn test:unit --coverage --watch
 ```
 
-Report will be placed in directory `coverage`
+### Debugging
+
+Run following command If you want to check how does tests run:
+
+```bash
+# clear jest cache
+node node_modules/.bin/jest --clearCache
+
+# run tests
+node --inspect-brk node_modules/.bin/vue-cli-service test:unit --runInBand
+```
 
 ### Error
 

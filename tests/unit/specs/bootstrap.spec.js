@@ -73,15 +73,16 @@ describe('Application bootstrap: router', () => {
     });
 
     it('router should be replaced by user instance', () => {
-        const router = new Router({
-            mode: 'history',
-        });
+        const router = new Router();
 
         const app = bootstrap({
             router,
         });
 
         expect(app.$router === router).toBeTruthy();
+
+        // cleaning: router used a hash mode
+        location.replace('/');
     });
 });
 

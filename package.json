@@ -1,7 +1,7 @@
 {
   "name": "@smoozzy/app",
   "description": "Bootstrap for Vue app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Smoozzy Code <smoozzy.code@gmail.com>",
   "license": {
     "type": "MIT",
@@ -32,7 +32,7 @@
     "babel-jest": "24.8.0",
     "eslint": "5.16.0",
     "eslint-plugin-vue": "5.2.2",
-    "lint-staged": "8.1.6",
+    "lint-staged": "8.1.7",
     "vue": "2.6.10",
     "vue-router": "3.0.6",
     "vue-template-compiler": "2.6.10",
