@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Module utils should fix navigation to default children route 1`] = `
+Object {
+  "name": "auth",
+  "path": "/auth",
+}
+`;
+
+exports[`Module utils should fix navigation to default children route 2`] = `
+Object {
+  "children": Array [
+    Object {
+      "name": "signin",
+      "path": "signin",
+    },
+    Object {
+      "name": "signup",
+      "path": "signup",
+    },
+  ],
+  "name": "auth",
+  "path": "/auth",
+}
+`;
+
+exports[`Module utils should fix navigation to default children route 3`] = `
+Object {
+  "children": Array [
+    Object {
+      "name": "auth",
+      "path": "",
+    },
+    Object {
+      "name": "signup",
+      "path": "signup",
+    },
+  ],
+  "path": "/auth",
+}
+`;
+
+exports[`Module utils should fix navigation to default children route 4`] = `
+Object {
+  "path": "*",
+  "redirect": Object {
+    "name": "page404",
+  },
+}
+`;

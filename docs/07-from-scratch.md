@@ -12,6 +12,7 @@ import {sync} from 'vuex-router-sync';
 
 import SBootstrap from '@smoozzy/app/src/components/bootstrap';
 import methods from '@smoozzy/app/src/methods';
+import {RootStore as Store} from '@smoozzy/app/src/utils/store';
 
 Vue.config.productionTip = false;
 Vue.use(Router);
@@ -25,7 +26,7 @@ const router = new Router({
     // ... router options
 });
 
-const store = new Vuex.Store({
+const store = new Store({
     strict: process.env.NODE_ENV !== 'production',
     // ... vuex options
 });

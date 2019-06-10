@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Utils: store helpers for application (app component) should correct map actions 1`] = `
+<div>Wrapped Vuex helpers
+  <p>nickname: odin</p>
+  <p>name: odin</p>
+  <p>nick: odin</p>
+  <p>status: loaded</p>
+  <p>isLoaded: Ok</p>
+  <div>Profile</div>
+</div>
+`;
+
+exports[`Utils: store helpers for application (app component) should correct map mutations 1`] = `
+<div>Wrapped Vuex helpers
+  <p>nickname: error</p>
+  <p>name: error</p>
+  <p>nick: error</p>
+  <p>status: error</p>
+  <p>isLoaded: waiting</p>
+  <div>Profile</div>
+</div>
+`;
+
+exports[`Utils: store helpers for application (app component) should correct map state and getters 1`] = `
+<div>Wrapped Vuex helpers
+  <p>nickname: somebody</p>
+  <p>name: somebody</p>
+  <p>nick: somebody</p>
+  <p>status: loading</p>
+  <p>isLoaded: waiting</p>
+  <div>Profile</div>
+</div>
+`;
+
+exports[`Utils: store helpers for module (module component) should correct map actions 1`] = `
+<div>Wrapped Vuex helpers
+  <div>Profile
+    <p>nickname: odin</p>
+    <p>name: odin</p>
+    <p>status: loaded</p>
+    <p>isLoaded: Ok</p>
+  </div>
+</div>
+`;
+
+exports[`Utils: store helpers for module (module component) should correct map mutations 1`] = `
+<div>Wrapped Vuex helpers
+  <div>Profile
+    <p>nickname: error</p>
+    <p>name: error</p>
+    <p>status: error</p>
+    <p>isLoaded: waiting</p>
+  </div>
+</div>
+`;
+
+exports[`Utils: store helpers for module (module component) should correct map state and getters 1`] = `
+<div>Wrapped Vuex helpers
+  <div>Profile
+    <p>nickname: somebody</p>
+    <p>name: somebody</p>
+    <p>status: loading</p>
+    <p>isLoaded: waiting</p>
+  </div>
+</div>
+`;

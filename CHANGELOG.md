@@ -1,3 +1,10 @@
+## [0.4.0](https://github.com/smoozzy/app/compare/v0.3.0...v0.4.0) (2019-08-13)
+
+### Features
+
+* added modules system
+
+
 ## [0.3.0](https://github.com/smoozzy/app/compare/v0.2.0...v0.3.0) (2019-05-21)
 
 ### Features

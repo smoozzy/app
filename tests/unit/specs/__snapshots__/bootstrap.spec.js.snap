@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application bootstrap should be mountable 1`] = `
+exports[`Bootstrap: application should be mountable 1`] = `
 <div class="s-bootstrap">
   <!---->
 </div>
 `;
 
-exports[`Application bootstrap: router router should be configurable 1`] = `
+exports[`Bootstrap: router should be configurable 1`] = `
 <div class="s-bootstrap">
   <div class="home">Home component</div>
 </div>

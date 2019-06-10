@@ -1,23 +1,31 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Vuex from 'vuex';
+import bootstrap, {
+    Store,
+} from '@/index';
 
-import bootstrap from '@/index';
 
+describe('Bootstrap: application', () => {
+    let app;
 
-describe('Application bootstrap', () => {
+    afterEach(() => {
+        // @see https://vuejs.org/v2/api/#vm-destroy
+        app.$destroy();
+    });
+
     it('should be Vue instance', () => {
-        const app = bootstrap();
+        app = bootstrap();
 
         expect(app).toBeInstanceOf(Vue);
     });
 
-    it('should be configurable', () => {
+    it('should be configurable (property `data`)', () => {
         const dataMock = jest.fn(() => ({
             property: 'test',
         }));
 
-        const app = bootstrap({
+        app = bootstrap({
             data: dataMock,
         });
 
@@ -25,21 +33,42 @@ describe('Application bootstrap', () => {
         expect(app.property).toBe('test');
     });
 
-    it('should be mountable', () => {
-        const vm = bootstrap().$mount();
+    it('should be configurable (property `methods`)', () => {
+        const methodMock = jest.fn(() => 42);
 
-        expect(vm.$el.outerHTML).toMatchSnapshot();
+        app = bootstrap({
+            methods: {
+                getQuestionOfLife: methodMock,
+            }
+        });
+
+        expect(typeof app.getQuestionOfLife).toBe('function');
+        expect(app.getQuestionOfLife()).toBe(42);
+        expect(typeof app.component).toBe('function');
+        expect(app.component('yet-another-component')).not.toBeDefined();
+    });
+
+    it('should be mountable', () => {
+        app = bootstrap().$mount();
+
+        expect(app.$el.outerHTML).toMatchSnapshot();
     });
 });
 
-describe('Application bootstrap: router', () => {
-    it('should have router', () => {
-        const app = bootstrap();
+describe('Bootstrap: router', () => {
+    let app;
+
+    afterEach(() => {
+        app.$destroy();
+    });
+
+    it('should be instance of Vue Router', () => {
+        app = bootstrap();
 
         expect(app.$router).toBeInstanceOf(Router);
     });
 
-    it('router should be configurable', () => {
+    it('should be configurable', () => {
         const homeRoute = {
             name: 'home',
             path: '/',
@@ -63,37 +92,43 @@ describe('Application bootstrap: router', () => {
             },
         };
 
-        const vm = bootstrap({
+        app = bootstrap({
             router: {
                 routes: [homeRoute]
             }
         }).$mount();
 
-        expect(vm.$el.outerHTML).toMatchSnapshot();
+        expect(app.$el.outerHTML).toMatchSnapshot();
     });
 
-    it('router should be replaced by user instance', () => {
+    it('should be replaced by user instance', () => {
         const router = new Router();
 
-        const app = bootstrap({
+        app = bootstrap({
             router,
         });
 
         expect(app.$router === router).toBeTruthy();
 
-        // cleaning: router used a hash mode
+        // cleaning: router uses a hash mode
         location.replace('/');
     });
 });
 
-describe('Application bootstrap: store', () => {
-    it('should have store', () => {
-        const app = bootstrap();
+describe('Bootstrap: store', () => {
+    let app;
+
+    afterEach(() => {
+        app.$destroy();
+    });
+
+    it('should be instance of Vuex Store', () => {
+        app = bootstrap();
 
         expect(app.$store).toBeInstanceOf(Vuex.Store);
     });
 
-    it('store should be configurable', () => {
+    it('should be configurable', () => {
         const store = {
             state: {
                 property: 'test',
@@ -105,7 +140,7 @@ describe('Application bootstrap: store', () => {
             },
         };
 
-        const app = bootstrap({
+        app = bootstrap({
             store,
         });
 
@@ -121,7 +156,7 @@ describe('Application bootstrap: store', () => {
             params: currentRoute.params,
             meta: currentRoute.meta,
             from: currentRoute.from,
-        }
+        };
 
         expect(app.$store.state).toEqual({
             property: 'test',
@@ -129,14 +164,13 @@ describe('Application bootstrap: store', () => {
                 from: clonedRoute,
             }),
         });
-
         expect(app.$store.getters.theSameProperty).toBe('test');
     });
 
-    it('store should be replaced by user instance', () => {
-        const store = new Vuex.Store();
+    it('should be replaced by user instance of root store', () => {
+        const store = new Store();  // root store
 
-        const app = bootstrap({
+        app = bootstrap({
             store,
         });
 

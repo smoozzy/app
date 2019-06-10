@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application modules should register application module 1`] = `
+<div class="s-bootstrap">
+  <ul>
+    <li>First article</li>
+    <li>Second article</li>
+    <li>Third article</li>
+  </ul>
+</div>
+`;
+
+exports[`Application modules should register several modules 1`] = `
+<div class="s-bootstrap">
+  <div>
+    <p>Please, log in</p>
+    <h1>Products</h1>
+    <ul>
+      <li>Product 1</li>
+      <li>Product 2</li>
+    </ul>
+  </div>
+</div>
+`;
+
+exports[`Application modules should register several modules 2`] = `
+<div class="s-bootstrap">
+  <div>
+    <p>Hello, John</p>
+    <h1>Products</h1>
+    <ul>
+      <li>Product 1</li>
+      <li>Product 2</li>
+    </ul>
+  </div>
+</div>
+`;
