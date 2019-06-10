@@ -2,4 +2,5 @@ coverage/*
 tests/*
 .*
 *.config.js
+*.lock
 *.log

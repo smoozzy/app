@@ -1,6 +1,6 @@
 # Smoozzy App
 
-This project is a bootstrap for Vue aplications. It's similar to `createApp` from Vue 3 (see proposal [Global mounting/configuration API change](https://github.com/vuejs/rfcs/pull/29)).
+This project is a bootstrap for Vue applications. It's similar to `createApp` from Vue 3 (see proposal [Global mounting/configuration API change](https://github.com/vuejs/rfcs/pull/29)).
 
 The bootstrap creates a Vue application with the following plugins and extensions:
 
@@ -101,7 +101,7 @@ The bootstrap uses the official [Vue router](http://router.vuejs.org/) ([Github]
 
 ### Store
 
-The bootstrap uses [Vuex](https://vuex.vuejs.org) ([Github](https://github.com/vuejs/vuex)) for centralized state management of the application.
+The bootstrap uses [Vuex](https://vuex.vuejs.org) ([Github](https://github.com/vuejs/vuex)) for centralised state management of the application.
 
 
 ## Bootstrap from scratch
@@ -203,7 +203,7 @@ yarn upgrade
 We use [Jest](https://jestjs.io) and [@vue/cli-plugin-unit-jest](https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest) for running unit tests.
 
 ```bash
-# wath mode for a tests running
+# watch mode for a tests running
 yarn test:unit --watch
 
 # if you want to get coverage report (will be placed in directory `coverage`)
