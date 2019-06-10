@@ -1,7 +1,7 @@
 {
   "name": "@smoozzy/app",
   "description": "Bootstrap for Vue app",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Smoozzy Code <smoozzy.code@gmail.com>",
   "license": {
     "type": "MIT",
@@ -18,7 +18,7 @@
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "test": "yarn test:unit",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit --coverage"
   },
   "devDependencies": {
     "@babel/core": "7.4.5",

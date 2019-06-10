@@ -7,7 +7,7 @@ Bootstrap is library that simplify creating of big applications on Vue.js. Boots
 
 1. [Overview](./01-overview.md)
 2. [Vue plugins](./02-vue-plugins.md)
-3. Modules
+3. [Modules](./03-modules.md)
 4. Modals
 5. I18n
 6. Example
@@ -20,7 +20,7 @@ Bootstrap is library that simplify creating of big applications on Vue.js. Boots
 - [x] router
 - [x] store
 - [x] vue globals wrapper
-- [ ] modules system
+- [x] modules system
 - [ ] modals
   - [ ] manager
   - [ ] component
@@ -32,7 +32,7 @@ Bootstrap is library that simplify creating of big applications on Vue.js. Boots
 
 ## Issues
 
-If you found bug or unexpected behavior feel free to [report issue](/smoozzy/app/issues).
+If you found bug or unexpected behavior feel free to [report issue](../../../issues).
 
 
 ## Changelog

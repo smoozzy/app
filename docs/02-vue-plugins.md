@@ -26,18 +26,45 @@ bootstrap({
 }).$mount('#app');
 ```
 
-Also you can pass own instance of plugin in application options
+Also you can pass own instance of plugin in application options. We decided to simplify your life and reexported `Router` and `Store` from the bootstrap.
 
 ```javascript
-import bootstrap from '@smoozzy/app';
-import Router from 'vue-router';
-import Vuex from 'vuex';
+import bootstrap, {
+    Router,
+    Store,
+} from '@smoozzy/app';
+
 
 const router = new Router({ /* Router configuration */ });
-const store = new Vuex.Store({ /* Vuex configuration */ });
+const store = new Store({ /* Vuex configuration */ });
 
 bootstrap({
     router,
     store,
 }).$mount('#app');
+```
+
+
+## Migration to the bootstrap
+
+Migration is very simple process. You should replace own bootstap code to our implementation. If you use additional setup of Router or Store you should use ones from the bootsrap exports. Router and Store are the same as ones from `vue-router` and `vuex` packages. But Store from the bootsrap has additional functional to support [application modules](./03-modules.md).
+
+Also in your bundle you can patch Vuex exports. It allows you don't rewrite other code.
+
+```javascript
+import {
+    Store,
+    mapState,
+    mapGetters,
+    mapMutations,
+    mapActions,
+} from '@smoozzy/app';
+import Vuex from 'vuex';
+
+// patching Vuex
+Vuex.Store = Store;
+Vuex.mapState = mapState;
+Vuex.mapGetters = mapGetters;
+Vuex.mapMutations = mapMutations;
+Vuex.mapActions = mapActions;
 ```

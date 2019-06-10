@@ -26,7 +26,7 @@ You can read detailed [documentation](./docs/index.md)
 
 1. [Overview](./docs/01-overview.md)
 2. [Vue plugins](./docs/02-vue-plugins.md)
-3. Modules system
+3. [Modules](./docs/03-modules.md)
 4. Modals
 5. I18n
 6. Example
@@ -36,7 +36,7 @@ You can read detailed [documentation](./docs/index.md)
 
 ## Issues
 
-If you found bug or unexpected behavior feel free to [report issue](/smoozzy/app/issues)
+If you found bug or unexpected behavior feel free to [report issue](../../issues)
 
 
 ## Changelog

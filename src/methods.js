@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import {normalize} from './utils/module';
 
 
 export default {
@@ -26,7 +27,7 @@ export default {
      * @see https://vuejs.org/v2/api/#Vue-directive
      * @param {string} id
      * @param {DirectiveFunction|DirectiveOptions} definition
-     * @return {Vue}
+     * @return {DirectiveFunction|DirectiveOptions|Vue}
      */
     directive(id, definition) {
         if (!definition) {
@@ -44,7 +45,7 @@ export default {
      * @see https://vuejs.org/v2/api/#Vue-filter
      * @param {string} id
      * @param {function} definition
-     * @return {Vue}
+     * @return {function|Vue}
      */
     filter(id, definition) {
         if (!definition) {
@@ -65,6 +66,22 @@ export default {
      */
     mixin(mixin) {
         Vue.mixin(mixin);
+
+        return this;
+    },
+
+    /**
+     * Registers app modules
+     *
+     * @param {AppModule|AppModule[]} module
+     * @return {Vue}
+     */
+    module(module) {
+        const modules = (Array.isArray(module) ? module : [module])
+            .map(normalize, this)  // normalize all modules
+            .filter(route => Boolean(route.path));  // filter modules with path and add as router routes
+
+        this.$router.addRoutes(modules);
 
         return this;
     },
