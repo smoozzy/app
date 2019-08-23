@@ -36,15 +36,17 @@ function getComponentWrapper(component, extension) {
 function normalizeRouteNames(module) {
     const {
         name,
-        children,
+        /** @type RouteConfig[] */ children,
         /** @type RouteConfig */ ...route
     } = module;
 
     if (Array.isArray(children)) {
         // we assume if module has children one will have name
 
-        // find overview (default) page in nested routes
-        const overview = children.find(({path}) => !path /* path is empty string or undefined */ || path === '/');
+        // find overview page (default child route) in children routes
+        const overview = children.find(({path}) => {
+            return !path /* path is empty string or undefined */ || path === '/';
+        });
 
         if (overview === undefined) {
             route.name = name;
@@ -52,6 +54,11 @@ function normalizeRouteNames(module) {
             // Fix: [vue-router] named route has a default child route (path: '' or '/').
             // When navigating to this named route, the default child route will not be rendered.
             overview.name = name;
+
+            // add empty path for overview (default) child route if is not exist
+            if (overview.path === undefined) {
+                overview.path = '';
+            }
         }
 
         // check children routes
@@ -85,6 +92,11 @@ export function normalize(module) {
 
     // extends module with properties like store
     const extension = {};
+
+    // check: is module name exist?
+    if (store !== undefined) {
+        assert(name, 'module should have name if uses store');
+    }
 
     if (store !== undefined) {
         // prevent to replace module by module with the same name

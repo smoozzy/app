@@ -35,3 +35,21 @@ exports[`Application modules should register several modules 2`] = `
   </div>
 </div>
 `;
+
+exports[`Application modules should run navigation after adding of modules (freezed navigation) 1`] = `
+<div class="s-bootstrap">
+  <div>
+    <h1>Products</h1>
+    <h2>Product</h2>
+  </div>
+</div>
+`;
+
+exports[`Application modules should run navigation after adding of modules 1`] = `
+<div class="s-bootstrap">
+  <div>
+    <h1>Products</h1>
+    <h2>Product</h2>
+  </div>
+</div>
+`;

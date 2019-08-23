@@ -77,11 +77,22 @@ export default {
      * @return {Vue}
      */
     module(module) {
-        const modules = (Array.isArray(module) ? module : [module])
-            .map(normalize, this)  // normalize all modules
+        const router = this.$router;
+        const {history} = router;
+
+        const routes = (Array.isArray(module) ? module : [module])
+            .map(normalize, this)  // normalize modules
             .filter(route => Boolean(route.path));  // filter modules with path and add as router routes
 
-        this.$router.addRoutes(modules);
+        // add new routes
+        router.addRoutes(routes);
+
+        // navigation transition for added routes will not run if history in pending state
+        if (history.pending && history.pending.matched.length === 0) {
+            // do navigation transition if we have route that is responsible for this location
+            // (maybe it need to add checking current route `router.match(currentLocation) !== router.currentRoute`)
+            history.transitionTo(history.getCurrentLocation());
+        }
 
         return this;
     },

@@ -32,7 +32,7 @@ describe('Module utils', () => {
             }, {
                 name: 'signup',
                 path: 'signup',
-            }]
+            }],
         })).toMatchSnapshot();
 
         // case: child with default route
@@ -45,7 +45,19 @@ describe('Module utils', () => {
             }, {
                 name: 'signup',
                 path: 'signup',
-            }]
+            }],
+        })).toMatchSnapshot();
+
+        // case: default child route without defined path
+        expect(normalize({
+            name: 'auth',
+            path: '/auth',
+            children: [{
+                name: 'signin', // default child route
+            }, {
+                name: 'signup',
+                path: 'signup',
+            }],
         })).toMatchSnapshot();
 
         // case: routes without name
@@ -55,6 +67,17 @@ describe('Module utils', () => {
                 name: 'page404',
             },
         })).toMatchSnapshot();
+    });
+
+    it('should have name if uses store', () => {
+        expect(() => {
+            normalize({
+                path: '/auth',
+                store: {
+                    state: {},
+                },
+            });
+        }).toThrow();
     });
 
     it('should raise error if exists store module with the same name', () => {

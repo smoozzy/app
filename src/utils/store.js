@@ -70,10 +70,19 @@ export function RootStore(options) {
     // workaround for guard in strict mode (module store)
     function commit(type, payload, options) {
         const path = type.split(NAMESPACE_DIVIDER);
-        path.pop();  // remove mutation name
-
-        const module = that._stores[path.join(NAMESPACE_DIVIDER)];
+        let module;
         let committing;
+
+        // find a plugged module store
+        for (let i = path.length - 1; i > 0; i--) {
+            path.pop();  // first iteration - remove mutation name
+                         // other iterations - remove submodule name
+
+            module = that._stores[path.join(NAMESPACE_DIVIDER)];
+            if (module) {
+                break;
+            }
+        }
 
         if (module) {  // set committing status if module exists
             committing = module._committing;

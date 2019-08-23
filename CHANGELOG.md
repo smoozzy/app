@@ -1,3 +1,15 @@
+## [0.4.1](https://github.com/smoozzy/app/compare/v0.3.0...v0.4.0) (2019-??-??)
+
+### Features
+
+* can omit "path" property for default child route
+
+### Bugfixes
+
+* fixed router navigation after adding new modules on application setup if router guard freezed navigation 
+* fixed raising of error in store (strict mode) on mutation in submodule 
+
+
 ## [0.4.0](https://github.com/smoozzy/app/compare/v0.3.0...v0.4.0) (2019-08-13)
 
 ### Features

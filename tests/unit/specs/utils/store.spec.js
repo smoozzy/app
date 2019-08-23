@@ -187,6 +187,56 @@ describe('Utils: store', () => {
         rootStore.dispatch('profile/load', {name: 'balder'});
         expect(moduleStore.getters.name).toBe('balder');
     });
+
+    it('root and module stores should not raise exception on internal mutation in submodule', () => {
+        const moduleStoreMock = {
+            strict: true,
+            getters: {
+                products(state) {
+                    return state.products.collection;
+                },
+            },
+            actions: {
+                load({dispatch}) {
+                    return dispatch('products/load');
+                },
+            },
+            modules: {
+                products: {
+                    namespaced: true,
+
+                    state: {
+                        collection: [],
+                    },
+                    mutations: {
+                        fill(state, products) {
+                            state.collection = products;
+                        } ,
+                    },
+                    actions: {
+                        load({commit}) {
+                            commit('fill', [{
+                                name: 'Product 1',
+                            }]);
+                        },
+                    },
+                },
+            },
+        };
+
+        const rootStore = new RootStore();
+        const moduleStore = rootStore.registerModuleStore('shop', moduleStoreMock);
+
+        // module action
+        moduleStore.dispatch('products/load');
+        expect(rootStore.getters['shop/products']).toEqual([{
+            name: 'Product 1'
+        }]);
+
+        // root mutation
+        rootStore.commit('shop/products/fill', []);
+        expect(moduleStore.state.products.collection).toEqual([]);
+    });
 });
 
 describe('Utils: store helpers', () => {
