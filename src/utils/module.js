@@ -23,7 +23,13 @@ function getComponentWrapper(component, extension) {
             ? component()  // dynamic loading
             : Promise.resolve(component);  // static loading
 
-        return promise.then(component => Object.assign(component, extension));
+        return promise.then(module => {
+            const component = module && Object.prototype.hasOwnProperty.call('default')
+                ? module['default']  // ES6 module
+                : module;            // Node.js module or static loading
+
+            return Object.assign(component, extension)
+        });
     };
 }
 

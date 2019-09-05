@@ -1,7 +1,7 @@
 {
   "name": "@smoozzy/app",
   "description": "Bootstrap for Vue app",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "Smoozzy Code <smoozzy.code@gmail.com>",
   "license": {
     "type": "MIT",
@@ -59,7 +59,7 @@
   },
   "lint-staged": {
     "*.{js,vue}": [
-      "vue-cli-service lint",
+      "vue-cli-service lint --no-fix",
       "git add"
     ]
   }

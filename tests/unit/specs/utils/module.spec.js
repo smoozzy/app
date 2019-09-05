@@ -158,6 +158,8 @@ describe('Module utils', () => {
 
             // local store
             expect(component.store instanceof Vuex.Store).toBeTruthy();
+            expect(component.store !== root.$store).toBeTruthy();
+
             expect(component.store.state.counter).toBe(1);
             expect(component.store.getters.square).toBe(1);
 
@@ -178,6 +180,33 @@ describe('Module utils', () => {
 
             expect(component.store.state.counter).toBe(3);
             expect(component.store.getters.square).toBe(9);
+
+            done();
+        });
+    });
+
+    it('should register local store for dynamically loaded module component', done => {
+        const root = getRootComponentMock();
+
+        const route = normalize.call(root, {  // setup correct this
+            name: 'dynamic',
+            path: '/dynamic',
+            component: import('./__fixtures__/dynamic-component.js'),
+            store: {
+                state: {
+                    status: 'Ok',
+                },
+            },
+        });
+
+        route.component().then(component => {
+            // root store
+            expect(root.$store.state.dynamic.status).toBe('Ok');
+
+            // local store
+            expect(component.store instanceof Vuex.Store).toBeTruthy();
+            expect(component.store !== root.$store).toBeTruthy();
+            expect(component.store.state.status).toBe('Ok');
 
             done();
         });

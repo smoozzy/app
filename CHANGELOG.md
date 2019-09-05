@@ -1,4 +1,11 @@
-## [0.4.1](https://github.com/smoozzy/app/compare/v0.3.0...v0.4.0) (2019-??-??)
+## [0.4.2](https://github.com/smoozzy/app/compare/v0.4.1...v0.4.2) (2019-09-05)
+
+### Bugfixes
+
+* fixed initialization of dynamically loaded module
+
+
+## [0.4.1](https://github.com/smoozzy/app/compare/v0.4.0...v0.4.1) (2019-08-23)
 
 ### Features
 
@@ -6,8 +13,8 @@
 
 ### Bugfixes
 
-* fixed router navigation after adding new modules on application setup if router guard freezed navigation 
-* fixed raising of error in store (strict mode) on mutation in submodule 
+* fixed router navigation after adding new modules on application setup if router guard freezed navigation
+* fixed raising of error in store (strict mode) on mutation in submodule
 
 
 ## [0.4.0](https://github.com/smoozzy/app/compare/v0.3.0...v0.4.0) (2019-08-13)

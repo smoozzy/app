@@ -28,7 +28,6 @@ module.exports = {
     // coverage
     collectCoverageFrom: [
         'src/**/*.{js,vue}',
-        '!src/constants.js',
         '!**/node_modules/**',
     ],
     coverageDirectory: '<rootDir>/coverage',
