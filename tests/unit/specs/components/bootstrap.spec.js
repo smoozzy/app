@@ -4,7 +4,7 @@ import {
 } from '@vue/test-utils';
 import VueRouter from 'vue-router';
 
-import SBootstrap from '@/components/bootstrap.vue';
+import SBootstrap from '@/components/bootstrap';
 
 
 describe('Component `bootstrap`', () => {
