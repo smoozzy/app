@@ -1,3 +1,16 @@
+## [0.5.0](https://github.com/smoozzy/app/compare/v0.4.2...v0.5.0) (2019-09-12)
+
+### Features
+
+* vue loader is not required for transpile the bootstrap component anymore
+* modules system was rewritten from scratch
+* unregister functionality of module was dropped
+
+### Bugfixes
+
+* fixed access from module's mutation and action to root's methods (flag `options.root`)
+
+
 ## [0.4.2](https://github.com/smoozzy/app/compare/v0.4.1...v0.4.2) (2019-09-05)
 
 ### Bugfixes
