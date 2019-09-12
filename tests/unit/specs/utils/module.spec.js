@@ -1,13 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {normalize} from '@/utils/module';
-import {RootStore} from '@/utils/store';
+import {registerModuleStore} from '@/utils/store';
 
 Vue.use(Vuex);
 
+const {Store} = Vuex;
+
+
 function getRootComponentMock() {
     return {
-        $store: new RootStore({
+        $store: new Store({
             strict: true,
         }),
     };
@@ -83,7 +86,7 @@ describe('Module utils', () => {
     it('should raise error if exists store module with the same name', () => {
         const root = getRootComponentMock();
 
-        root.$store.registerModule('auth', {
+        registerModuleStore(root.$store, 'auth', {
             state: {
                 module: 'auth-root',
             },
@@ -157,14 +160,14 @@ describe('Module utils', () => {
             expect(root.$store.getters['math/square']).toBe(1);
 
             // local store
-            expect(component.store instanceof Vuex.Store).toBeTruthy();
+            expect(component.store instanceof Store).toBeTruthy();
             expect(component.store !== root.$store).toBeTruthy();
 
             expect(component.store.state.counter).toBe(1);
             expect(component.store.getters.square).toBe(1);
 
             // changing via root store mutation
-            root.$store.commit('math/increment')
+            root.$store.commit('math/increment');
 
             expect(root.$store.state.math.counter).toBe(2);
             expect(root.$store.getters['math/square']).toBe(4);
@@ -199,12 +202,14 @@ describe('Module utils', () => {
             },
         });
 
-        route.component().then(component => {
+        route.component().then(module => {
+            const component = module.default;
+
             // root store
             expect(root.$store.state.dynamic.status).toBe('Ok');
 
             // local store
-            expect(component.store instanceof Vuex.Store).toBeTruthy();
+            expect(component.store instanceof Store).toBeTruthy();
             expect(component.store !== root.$store).toBeTruthy();
             expect(component.store.state.status).toBe('Ok');
 
@@ -243,14 +248,14 @@ describe('Module utils', () => {
             .then(() => {
                 // linear component store
                 return route.components.linear().then(component => {
-                    expect(component.store instanceof Vuex.Store).toBeTruthy();
+                    expect(component.store instanceof Store).toBeTruthy();
                     expect(component.store.state.name).toBe('statistic');
                 });
             })
             .then(() => {
                 // polynomial component store
                 return route.components.polynomial().then(component => {
-                    expect(component.store instanceof Vuex.Store).toBeTruthy();
+                    expect(component.store instanceof Store).toBeTruthy();
                     expect(component.store.state.name).toBe('statistic');
                 });
             })

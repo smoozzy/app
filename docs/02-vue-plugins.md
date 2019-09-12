@@ -30,8 +30,8 @@ Also you can pass own instance of plugin in application options. We decided to s
 
 ```javascript
 import bootstrap, {
-    Router,
-    Store,
+    Router,  // re-exprort from Vue Router
+    Store,   // re-exprort from Vuex
 } from '@smoozzy/app';
 
 
@@ -53,7 +53,6 @@ Also in your bundle you can patch Vuex exports. It allows you don't rewrite othe
 
 ```javascript
 import {
-    Store,
     mapState,
     mapGetters,
     mapMutations,
@@ -62,7 +61,6 @@ import {
 import Vuex from 'vuex';
 
 // patching Vuex
-Vuex.Store = Store;
 Vuex.mapState = mapState;
 Vuex.mapGetters = mapGetters;
 Vuex.mapMutations = mapMutations;

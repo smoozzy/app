@@ -83,7 +83,8 @@ But this solution restricts access to application store. We can extend the store
 Let look at example:
 
 ```javascript
-// module view: overview
+/* Module view: Overview
+ */
 
 import {
     mapGetters,
@@ -110,6 +111,51 @@ export default {
     methods: {
         // mapping actions from module store
         ...mapActions('load'),
+    },
+};
+```
+
+```javascript
+/* Module store
+ */
+
+import api from '@/app/api';  // for example
+
+export default {
+    state: {
+        isLoaded: false,
+        isLoading: false,
+        collection: [],
+    },
+
+    getters: {
+        isLoaded(state, getters, rootState, rootGetters) {
+            // check data in other module via `rootState` and `rootGetters`
+            return state.isLoaded && rootGetters['profile/isLoaded'];
+        },
+
+        isLoading(state) {
+            return state.isLoading;
+        },
+
+        collection(state) {
+            return state.collection;
+        }
+    },
+
+    mutations: {
+        fill(state, data) {
+            state.collection = data;
+        },
+    },
+
+    actions: {
+        load({commit, dispatch}) {
+            // load related data from other module
+            return dispatch('dictionaries/productCategories/load', {root: true})
+                .then(() => api.get('products/overview'))
+                .then(data => commit('fill', data));
+        },
     },
 };
 ```

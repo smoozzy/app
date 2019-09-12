@@ -1,8 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-    RootStore,
-    ModuleStore,
+    registerModuleStore,
     mapState,
     mapGetters,
     mapMutations,
@@ -62,130 +61,54 @@ function getModuleMock() {
 }
 
 
-describe('Vuex defaults', () => {
-    // save original method
-    const {commit} = Store.prototype;
-
-    // mock `commit` method
-    const mock = jest.fn();
-    Store.prototype.commit = mock;
-
-    // create store
-    const store = new Store({
-        state: {
-            counter: 0,
-        },
-        mutations: {
-            increment(state) {
-                state.counter += 1;
-            },
-        },
-    });
-
-    // restore original method
-    // it should not affect store instance, see explanation in `src/utils/store.js`
-    Store.prototype.commit = commit;
-
-
-    it('store should not have internal property `stores`', () => {
-        expect(store._stores).toBeUndefined();
-    });
-
-    it('store should not have method `registerModuleStore`', () => {
-        expect(store.registerModuleStore).toBeUndefined();
-    });
-
-    it('store should not have method `unregisterModuleStore`', () => {
-        expect(store.unregisterModuleStore).toBeUndefined();
-    });
-
-    it('store should not have method `unlink`', () => {
-        expect(store.unlink).toBeUndefined();
-    });
-
-    it('store should have bounded method `commit`', () => {
-        expect(store.commit).not.toEqual(commit);
-    });
-
-    it('bounded method `commit` should call method with the same name from prototype', () => {
-        store.commit('increment');
-
-        expect(mock).toHaveBeenCalled();
-    });
-});
-
 describe('Utils: store', () => {
-    it('root store should be instance of Vuex store', () => {
-        const store = new RootStore();
-
-        expect(store).toBeInstanceOf(Store);
-    });
-
-    it('module store should be instance of Vuex store', () => {
-        const rootStore = new RootStore();
-        const moduleStore = new ModuleStore({}, rootStore);
-
-        expect(moduleStore).toBeInstanceOf(Store);
-    });
-
-    it('root store should not register module as root module', () => {
-        const rootStore = new RootStore();
-
-        expect(() => {
-            rootStore.registerModuleStore([], getModuleMock());
-        }).toThrow();
-    });
-
     it('root store should register module', () => {
-        const rootStore = new RootStore();
+        const rootStore = new Store({
+            strict: true,
+        });
         let moduleStore;
 
         expect(() => {
-            moduleStore = rootStore.registerModuleStore('profile', getModuleMock());
+            moduleStore = registerModuleStore(rootStore, 'profile', getModuleMock());
         }).not.toThrow();
 
+        // root store
         expect(rootStore.state.profile.nickname).toBe('somebody');
 
-        expect(moduleStore).toBeInstanceOf(ModuleStore);
+        // module store
+        expect(moduleStore).toBeInstanceOf(Store);
         expect(moduleStore.state.nickname).toBe('somebody');
     });
 
-    it('root store should unregister module', () => {
-        const rootStore = new RootStore();
-        const moduleStore = rootStore.registerModuleStore('profile', getModuleMock());
-
-        rootStore.unregisterModuleStore('profile');
-        moduleStore.commit('setNickname', 'odin');
-
-        expect(rootStore.state.profile).toBeUndefined();
-        expect(moduleStore.state.nickname).toBe('odin');
-    });
-
-    it('root store should do nothing if module do not exist', () => {
-        const rootStore = new RootStore();
+    it('root store should not register module as root module', () => {
+        const rootStore = new Store({
+            strict: true,
+        });
 
         expect(() => {
-            rootStore.unregisterModuleStore(['profile']);
-        }).not.toThrow();
+            registerModuleStore(rootStore, [], getModuleMock());
+        }).toThrow();
     });
 
     it('root and module stores should not raise exception on internal mutation', () => {
-        const rootStore = new RootStore();
-        const moduleStore = rootStore.registerModuleStore(['profile'], getModuleMock());
+        const rootStore = new Store({
+            strict: true,
+        });
+        const moduleStore = registerModuleStore(rootStore, ['profile'], getModuleMock());
 
         // mutations
-        moduleStore.commit('setNickname', 'odin');
-        expect(rootStore.state.profile.nickname).toBe('odin');
-
         rootStore.commit('profile/setNickname', 'thor');
         expect(moduleStore.state.nickname).toBe('thor');
 
-        // actions
-        moduleStore.dispatch('load', {name: 'loki'});
-        expect(rootStore.getters['profile/name']).toBe('loki');
+        moduleStore.commit('setNickname', 'odin');
+        expect(rootStore.state.profile.nickname).toBe('odin');
 
+        // actions
         rootStore.dispatch('profile/load', {name: 'balder'});
         expect(moduleStore.getters.name).toBe('balder');
+
+        moduleStore.dispatch('load', {name: 'loki'});
+        expect(rootStore.getters['profile/name']).toBe('loki');
     });
 
     it('root and module stores should not raise exception on internal mutation in submodule', () => {
@@ -221,11 +144,21 @@ describe('Utils: store', () => {
                         },
                     },
                 },
+                cart: {
+                    state: {
+                        cart: [],
+                    },
+                    mutations: {
+                        add(state, product) {
+                            state.cart.push(product);
+                        },
+                    },
+                },
             },
         };
 
-        const rootStore = new RootStore();
-        const moduleStore = rootStore.registerModuleStore('shop', moduleStoreMock);
+        const rootStore = new Store();
+        const moduleStore = registerModuleStore(rootStore, 'shop', moduleStoreMock);
 
         // module action
         moduleStore.dispatch('products/load');
@@ -241,8 +174,8 @@ describe('Utils: store', () => {
 
 describe('Utils: store helpers', () => {
     describe('for application (app component)', () => {
-        const rootStore = new RootStore(getRootMock());
-        const moduleStore = rootStore.registerModuleStore('profile', getModuleMock());
+        const rootStore = new Store(getRootMock());
+        const moduleStore = registerModuleStore(rootStore, 'profile', getModuleMock());
 
         const profile = {  // app module
             name: 'Profile',
@@ -326,8 +259,8 @@ describe('Utils: store helpers', () => {
     });
 
     describe('for module (module component)', () => {
-        const rootStore = new RootStore(getRootMock());
-        const moduleStore = rootStore.registerModuleStore('profile', getModuleMock());
+        const rootStore = new Store(getRootMock());
+        const moduleStore = registerModuleStore(rootStore, 'profile', getModuleMock());
 
         const profile = {  // app module
             name: 'Profile',

@@ -5,14 +5,16 @@ import {sync} from 'vuex-router-sync';
 
 import SBootstrap from './components/bootstrap';
 import methods from './methods';
-import {RootStore} from './utils/store';
 
-// reexport router, root store and helpers
+
+const {Store} = Vuex;
+
+// re-export router, store and helpers
 export {
     Router,
+    Store,
 };
 export {
-    RootStore as Store,
     mapState,
     mapGetters,
     mapMutations,
@@ -53,9 +55,9 @@ export default function bootstrap(options = {}) {
             base: process.env.BASE_URL,
         }, routerOptions));
 
-    const store = storeOptions instanceof RootStore
+    const store = storeOptions instanceof Store
         ? storeOptions
-        : new RootStore(Object.assign({
+        : new Store(Object.assign({
             strict: process.env.NODE_ENV !== 'production'
         }, storeOptions));
 

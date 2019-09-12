@@ -1,222 +1,144 @@
 import Vuex from 'vuex';
-import {extend} from './index';
-
-/* Explanation: why we need this black magic with store constructor
- *
- * In strict mode a store runs watcher that monitors any change from outside.
- * There are only one correct way to change state it is mutation or
- * the `commit` method (mutation internally uses the `commit` method).
- *
- * We try to replace the `commit` method to support tracking of a changes and
- * manage committing flag in the both of stores (root and module) at the same
- * time.
- *
- * Let's look at store constructor. We see initialization of internal structures,
- * overriding of the `commit` method and registration of options (store param)
- * as root module (creating of module collection). Next step is initialization
- * of submodules, mutations and actions. See `installModule` function.
- * (https://github.com/vuejs/vuex/blob/dev/src/store.js)
- *
- * `installModule` function creates local context for wrappers of mutations and
- * actions that uses overridden `commit` method (by Store constructor).
- * It means we can not replace the `commit` method for mutations and actions
- * of root module. Following code will produce error in tests because we try
- * to replace `commit` method after parent did initialization of root module:
- *
- * ```js
- * class MyStore extends Store {
- *     constructor(options) {
- *         super(options);
- *
- *         this.commit = function myCommitMethod() {};
- *     }
- * }
- * ```
- *
- * You can ask why can not use a magic with ES6 class syntax? We have restriction
- * with `super` keyword. See description on MDN.
- * (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super#Description)
- *
- * Our implementation try to replace the `commit` method at runtime parent
- * constructor.
- *
- * Enjoy!
- */
 
 const {Store} = Vuex;
-const NAMESPACE_DIVIDER = '/';
+
 
 /* Root store
  */
 
-/**
- * Constructs root store
- *
- * @constructor
- * @extends Store
- * @param {StoreOptions} [options]
- * @return {RootStore}
- */
-export function RootStore(options) {
-    // saved origin commit method from parent constructor
-    let /** @type function */ originalCommit;
-
-    // plugged module stores
-    /** @type Object<string,ModuleStore> */
-    this._stores = {};
-
-    const that = this;
-
-    // workaround for guard in strict mode (module store)
-    function commit(type, payload, options) {
-        const path = type.split(NAMESPACE_DIVIDER);
-        let module;
-        let committing;
-
-        // find a plugged module store
-        for (let i = path.length - 1; i > 0; i--) {
-            path.pop();  // first iteration - remove mutation name
-                         // other iterations - remove submodule name
-
-            module = that._stores[path.join(NAMESPACE_DIVIDER)];
-            if (module) {
-                break;
-            }
-        }
-
-        if (module) {  // set committing status if module exists
-            committing = module._committing;
-            module._committing = true;
-        }
-
-        // run mutation
-        originalCommit(type, payload, options);
-
-        if (module) {  // restore committing status
-            module._committing = committing;
-        }
-    }
-
-    // black magic to manage the `commit` method
-    Object.defineProperty(this, 'commit', {
-        get() {
-            // return method from prototype until parent constructor overrides it
-            return originalCommit ? commit : Store.prototype.commit;
-        },
-        set(/** @type function */ value) {
-            originalCommit = value;
-        }
-    });
-
-    // call parent constructor
-    Store.call(this, options);
-}
-
-RootStore.prototype = {
-    /**
-     * Creates module store and registers it as module in root store
-     *
-     * @this RootStore
-     * @param {string|string[]} path
-     * @param {StoreOptions|Module} module
-     * @param {ModuleOptions} [options]
-     * @return {ModuleStore}
-     */
-    registerModuleStore(path, module, options) {
-        const {
-            namespaced = false,
-        } = module;
-
-        // always register module store as namespaced module
-        module.namespaced = true;
-
-        // check params and register module
-        this.registerModule(path, module, options);
-        module.namespaced = namespaced;
-
-        const moduleStore = new ModuleStore(module, this);
-        this._stores[typeof path === 'string' ? path : path.join(NAMESPACE_DIVIDER)] = moduleStore;
-
-        return moduleStore;
-    },
-
-    /**
-     * Unregisters module store
-     *
-     * @this RootStore
-     * @param {string|string[]} path
-     */
-    unregisterModuleStore(path) {
-        const key = typeof path === 'string' ? path : path.join(NAMESPACE_DIVIDER);
-        const /** @type ModuleStore */ moduleStore = this._stores[key];
-
-        // check module store
-        if (!moduleStore) {
-            return false;
-        }
-
-        // unlink module store from root store
-        moduleStore.unlink();
-        this._stores[key] = null;
-
-        this.unregisterModule(path);
-    },
-};
-
-extend(RootStore, Store);
-
-
-/* Module store
- */
 
 /**
- * Constructs module store
+ * Creates module store and registers it as module in root store
  *
- * @constructor
- * @extends Store
- * @param {StoreOptions} options
- * @param {RootStore} rootStore
+ * @param {Store} rootStore
+ * @param {string|string[]} path
+ * @param {StoreOptions|Module} module
+ * @param {ModuleOptions} [options]
  * @return {ModuleStore}
  */
-export function ModuleStore(options, rootStore) {
-    // saved origin commit method from parent constructor
-    let /** @type function */ originalCommit;
+export function registerModuleStore(rootStore, path, module, options) {
+    const modulePath = typeof path === 'string' ? [path] : path;
 
-    // workaround for guard in strict mode (module store)
-    function commit(type, payload, options) {
-        const committing = rootStore._committing;
-        rootStore._committing = true;
-        originalCommit(type, payload, options);
-        rootStore._committing = committing;
-    }
+    // always register module store as namespaced module
+    module.namespaced = true;
 
-    // black magic to manage the `commit` method
-    Object.defineProperty(this, 'commit', {
-        get() {
-            // return method from prototype until parent constructor overrides it
-            return originalCommit ? commit : Store.prototype.commit;
-        },
-        set(/** @type function */ value) {
-            originalCommit = this._originalCommit = value;
-        }
+    // check params and register module
+    rootStore.registerModule(modulePath, module, options);
+
+    // create module store (avoid re-initialization of nested modules)
+    const moduleStore = new Store({
+        state: rootStore._modules.get(modulePath).state,
     });
 
-    // call parent constructor
-    Store.call(this, options);
+    // init internal strucures of module store
+    initNestedModules(moduleStore, module);
+    initModuleMethods(rootStore, moduleStore, modulePath, [], module);
+
+    // now mutations will run in scope of root store, but
+    // commiting flag will be setted in scope of module store
+    moduleStore._withCommit = function _withCommit(fn) {
+        // root store
+        const rootCommitting = rootStore._committing;
+        rootStore._committing = true;
+
+        // module store
+        const committing = this._committing;
+        this._committing = true;
+        fn();
+
+        this._committing = committing;
+        rootStore._committing = rootCommitting;
+    };
+
+    return moduleStore;
 }
 
-ModuleStore.prototype = {
+/**
+ * Setups internal structures in module stores
+ *
+ * @param {Store} store
+ * @param {StoreOptions|Module} module
+ */
+function initNestedModules(store, module) {
     /**
-     * Restores origin commit method and removes relationship with root store
+     * Creates new copy of module options
      *
-     * @this ModuleStore
+     * @param {StoreOptions|Module} module
+     * @return {StoreOptions|Module}
      */
-    unlink() {
-        this.commit = this._originalCommit;
-    }
-};
+    function getModulesTree(module) {
+        const {
+            namespaced = false,
+            state,
+            modules,
+        } = module;
 
-extend(ModuleStore, Store);
+        return {
+            namespaced,
+            state,
+            modules: Object.entries(modules || {}).reduce((memo, [name, nestedModule]) => {
+                memo[name] = getModulesTree(nestedModule);
+                return memo;
+            }, {}),
+        };
+    }
+
+    // register nested modules of first level (other levels will register automatically)
+    Object.entries(getModulesTree(module).modules).forEach(([name, nestedModule]) => {
+        store._modules.register([name], nestedModule, false);
+    });
+}
+
+/**
+ * Setups getters, mutations and actions of module store
+ *
+ * @param {Store} rootStore
+ * @param {Store} moduleStore
+ * @param {string[]} prefix - module path in root store
+ * @param {string[]} path - module path in module store
+ * @param {StoreOptions|Module} module
+ */
+function initModuleMethods(rootStore, moduleStore, prefix, path, module) {
+    const {
+        getters = {},
+        mutations = {},
+        actions = {},
+        modules = {},
+    } = module;
+
+    const rootNamespace = rootStore._modules.getNamespace(prefix.concat(path));
+    const moduleNamespace = moduleStore._modules.getNamespace(path);
+
+    // getters
+    Object.keys(getters).forEach(name => {
+        const rootKey = rootNamespace + name;
+        const moduleKey = moduleNamespace + name;
+
+        moduleStore._wrappedGetters[moduleKey] = rootStore._wrappedGetters[rootKey];
+
+        Object.defineProperty(moduleStore.getters, moduleKey, {
+            get() {
+                return rootStore._vm[rootKey];
+            },
+            enumerable: true,
+        });
+    });
+
+    // mutations
+    Object.keys(mutations).forEach(name => {
+        moduleStore._mutations[moduleNamespace + name] = rootStore._mutations[rootNamespace + name];
+    });
+
+    // actions
+    Object.keys(actions).forEach(name => {
+        moduleStore._actions[moduleNamespace + name] = rootStore._actions[rootNamespace + name];
+    });
+
+    // nested modules
+    Object.entries(modules).forEach(([name, nestedModule]) => {
+        initModuleMethods(rootStore, moduleStore, prefix, path.concat(name), nestedModule);
+    });
+}
 
 
 /* Wrapping of Vuex helper methods

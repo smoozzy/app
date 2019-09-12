@@ -1,4 +1,5 @@
 import {assert} from './index';
+import {registerModuleStore} from './store';
 
 
 /**
@@ -24,11 +25,16 @@ function getComponentWrapper(component, extension) {
             : Promise.resolve(component);  // static loading
 
         return promise.then(module => {
-            const component = module && Object.prototype.hasOwnProperty.call('default')
-                ? module['default']  // ES6 module
+            const component = module && Object.prototype.hasOwnProperty.call(module, 'default')
+                ? module['default']  // ES6 module (dynamic loading)
                 : module;            // Node.js module or static loading
 
-            return Object.assign(component, extension)
+            // extend component options
+            // it doesn't work for native ES6 modules, sad but true
+            // but this works for webpack module system
+            Object.assign(component, extension);
+
+            return module;
         });
     };
 }
@@ -107,7 +113,7 @@ export function normalize(module) {
     if (store !== undefined) {
         // prevent to replace module by module with the same name
         assert(!this.$store.state[name], 'root store should not have module with the same name');
-        extension.store = this.$store.registerModuleStore(name, store);
+        extension.store = registerModuleStore(this.$store, name, store);
     }
 
     // loading of vue components
