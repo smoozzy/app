@@ -21,10 +21,6 @@ export {
     mapActions
 } from './utils/store';
 
-Vue.config.productionTip = false;
-Vue.use(Router);
-Vue.use(Vuex);
-
 
 /**
  * @typedef {Object} AppOptions
@@ -44,8 +40,13 @@ export default function bootstrap(options = {}) {
         router: routerOptions,
         store: storeOptions,
         methods: methodsOptions,
-        ...app  // additional app options
+        ...otherOptions  // additional app options
     } = options;
+
+    // add plug-ins
+    Vue.config.productionTip = false;
+    Vue.use(Router);
+    Vue.use(Vuex);
 
     // prepare router and store
     const router = routerOptions instanceof Router
@@ -64,10 +65,11 @@ export default function bootstrap(options = {}) {
     sync(store, router);
 
     // create application
-    return new Vue(Object.assign(app, {
+    const app = Object.assign(otherOptions, {
         router,
         store,
-        methods: Object.assign(methods, methodsOptions),
-        render: h => h(SBootstrap),
-    }));
+        methods: Object.assign({}, methodsOptions, methods),
+    }, SBootstrap);
+
+    return new Vue(app);
 }

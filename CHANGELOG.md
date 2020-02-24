@@ -1,3 +1,15 @@
+## [0.6.0](https://github.com/smoozzy/app/compare/v0.5.0...v0.6.0) (2020-02-25)
+
+### Features
+
+* combined `Root` and `SBootstrap` components into single node
+
+### Bugfixes
+
+* fixed order of plug-ins initialization
+* fixed overriding of applicetion methods by methods from application options
+
+
 ## [0.5.0](https://github.com/smoozzy/app/compare/v0.4.2...v0.5.0) (2019-09-12)
 
 ### Features
